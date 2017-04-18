@@ -10,3 +10,5 @@ target
 .classpath
 .project
 Servers/
+src/main/resources/
+src/test/
