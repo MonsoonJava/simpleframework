@@ -92,6 +92,10 @@ public class ClassUtil {
             public boolean accept(File f) {
                 return f.isFile() && f.getName().endsWith(".class") || f.isDirectory();
             }});
+        //如果有空文件夹 需要跳过考虑
+        if(files == null || files.length == 0){
+            return;
+        }
         for(File f: files){
             String fileName = f.getName();
             if(f.isFile()){
@@ -102,12 +106,13 @@ public class ClassUtil {
                 doAddClass(set,className);
             }else {
                 //如果存在子文件夹，则递归读取子文件夹下的所有class文件，并加载
-                String subPackageName = fileName;
+                String subPackageName = null;
+                String subPackagePath = null;
                 if(packageName != null && packageName.length() >0){
-                    packageName = packageName + "." + subPackageName;
-                    packagePath = packagePath + "/" + subPackageName;
+                    subPackageName = packageName + "." + fileName;
+                    subPackagePath = packagePath + "/" + fileName;
                 }
-                addClass(set,packagePath,packageName);
+                addClass(set,subPackagePath,subPackageName);
             }
         }
     }

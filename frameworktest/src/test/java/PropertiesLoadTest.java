@@ -1,11 +1,16 @@
+import com.xfj.frameworktest.controller.CartController;
+import com.xfj.frameworktest.service.CartService;
 import org.junit.Before;
 import org.junit.Test;
 import simple.xfj.framework.constant.ConfigConstant;
+import simple.xfj.framework.helper.BeanHelper;
 import simple.xfj.framework.helper.ClassHelper;
+import simple.xfj.framework.helper.IocHelper;
 import simple.xfj.framework.util.ClassUtil;
 import simple.xfj.framework.util.PropsUtil;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -42,6 +47,26 @@ public class PropertiesLoadTest {
             System.out.println(cls.getPackage());
             System.out.println(cls.getName());
         }
+    }
+
+
+
+    /**
+     *      测试cartservice是否依赖注入到cartcontroller中
+     */
+    @Test
+    public void testFrameWorkIOC()throws Exception{
+        Set<Class<?>> beanSet = ClassHelper.getBeanSet();
+        ClassUtil.loadClass(IocHelper.class.getName(),true);
+        Map<Class<?>, Object> beanMap = BeanHelper.getBeanMap();
+        Set<Class<?>> keys = BeanHelper.getBeanMap().keySet();
+        for(Class clazz : keys){
+            System.out.println(clazz.getName());
+            System.out.println(beanMap.get(clazz));
+        }
+        CartController cartController = (CartController) beanMap.get(CartController.class);
+        System.out.println(cartController.getCartService() == beanMap.get(CartService.class) );
+
     }
 
 }
