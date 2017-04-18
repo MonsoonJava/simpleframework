@@ -2,9 +2,12 @@ import com.xfj.frameworktest.controller.CartController;
 import com.xfj.frameworktest.service.CartService;
 import org.junit.Before;
 import org.junit.Test;
+import simple.xfj.framework.bean.Handler;
+import simple.xfj.framework.bean.Request;
 import simple.xfj.framework.constant.ConfigConstant;
 import simple.xfj.framework.helper.BeanHelper;
 import simple.xfj.framework.helper.ClassHelper;
+import simple.xfj.framework.helper.ControllerHelper;
 import simple.xfj.framework.helper.IocHelper;
 import simple.xfj.framework.util.ClassUtil;
 import simple.xfj.framework.util.PropsUtil;
@@ -66,6 +69,19 @@ public class PropertiesLoadTest {
         }
         CartController cartController = (CartController) beanMap.get(CartController.class);
         System.out.println(cartController.getCartService() == beanMap.get(CartService.class) );
+    }
+
+    @Test
+    public void testControllerHelper(){
+        ClassUtil.loadClass(ControllerHelper.class.getName(),true);
+        Map<Request, Handler> actionMap = ControllerHelper.getActionMap();
+        Set<Request> keys = actionMap.keySet();
+        for(Request re : keys){
+            System.out.println(re.getRequestPath());
+            System.out.println(re.getRequestMethod());
+            System.out.println(actionMap.get(re).getControllerClass().getName());
+            System.out.println(actionMap.get(re).getActionMethod().getName());
+        }
 
     }
 
