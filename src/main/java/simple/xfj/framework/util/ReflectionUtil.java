@@ -30,12 +30,12 @@ public class ReflectionUtil {
         Object result = null;
         if(!method.isAccessible()){
             method.setAccessible(true);
-            try {
-                result = method.invoke(obj,args);
-            } catch (Exception e) {
-                LOGGER.error("can not invoke method:" + method.getName());
-                throw new RuntimeException("invoke method failure:" + method.getName());
-            }
+        }
+        try {
+            result = method.invoke(obj,args);
+        } catch (Exception e) {
+            LOGGER.error("can not invoke method:" + method.getName());
+            throw new RuntimeException("invoke method failure:" + method.getName());
         }
         return result;
     }

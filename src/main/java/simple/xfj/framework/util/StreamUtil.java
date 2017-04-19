@@ -21,6 +21,8 @@ public class StreamUtil {
             while ((line = reader.readLine())!= null){
                 sb.append(line);
             }
+            reader.close();
+            in.close();
         }catch (Exception e){
             LOGGER.error("read String from Stream failure");
             throw new RuntimeException(e);
