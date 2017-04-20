@@ -15,7 +15,7 @@ public class ReflectionUtil {
 
     private static Logger LOGGER = LoggerFactory.getLogger(ReflectionUtil.class);
 
-    public static Object newInstance(Class<?> clazz){
+    public static <T> T newInstance(Class<T> clazz){
         Object obj = null;
         try {
             obj = clazz.newInstance();
@@ -23,7 +23,7 @@ public class ReflectionUtil {
             LOGGER.error("can new " + clazz.getName());
             throw  new RuntimeException(e);
         }
-        return obj;
+        return (T)obj;
     }
 
     public static Object methodInvoke(Method method,Object obj,Object... args){

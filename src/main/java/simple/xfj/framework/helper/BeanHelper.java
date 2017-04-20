@@ -36,4 +36,9 @@ public class BeanHelper {
         }
         return null;
     }
+
+    public static void setBean(Class<?> clazz,Object object){
+        //用于在aop生成代理类后，替换bean容器里的原有目标类，
+        beanMap.put(clazz,object);
+    }
 }

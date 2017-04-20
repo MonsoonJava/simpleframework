@@ -47,7 +47,6 @@ public class DispatcherServlet extends HttpServlet{
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String method = req.getMethod().toLowerCase();
         String requestPath = req.getPathInfo();
-        System.out.println(requestPath);
         Request request = new Request(method,requestPath);
         Handler handler = ControllerHelper.getActionMap().get(request);
         if(null != handler){
@@ -55,7 +54,6 @@ public class DispatcherServlet extends HttpServlet{
             Object handlerBean = BeanHelper.getClassBean(handlerClass);
             //创建param
             Param param = getParam(req);
-            System.out.println(handler.getActionMethod().getName());
             Object res = ReflectionUtil.methodInvoke(handler.getActionMethod(), handlerBean, param);
             try {
                 doResult(req,resp,res);
@@ -82,7 +80,6 @@ public class DispatcherServlet extends HttpServlet{
             String[] nameValue = StringParam.split("&");
             if(nameValue != null && nameValue.length > 0){
                 for(int i = 0; i < nameValue.length;i++){
-                    System.out.println(nameValue[i]);
                     String[] pair = nameValue[i].split("=");
                     paramMap.put(pair[0],pair[1]);
                 }

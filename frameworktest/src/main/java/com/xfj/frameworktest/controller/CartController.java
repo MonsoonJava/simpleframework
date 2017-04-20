@@ -18,7 +18,7 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @Action(value = "/helloworld",method = RequestMethod.POST)
+    @Action(value = "/helloworld",method = RequestMethod.GET)
     public Data getRequest(Param param){
         Student s = new Student("xfh",24);
         Data data = new Data();
@@ -26,11 +26,11 @@ public class CartController {
         return data;
     }
 
-public CartService getCartService() {
+    public CartService getCartService() {
         return cartService;
         }
 
-public void setCartService(CartService cartService) {
+    public void setCartService(CartService cartService) {
         this.cartService = cartService;
-        }
-        }
+    }
+}

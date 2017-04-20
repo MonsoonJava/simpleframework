@@ -1,6 +1,7 @@
 package simple.xfj.framework.bootstarp;
 
 import simple.xfj.framework.annotation.Controller;
+import simple.xfj.framework.helper.AopHelper;
 import simple.xfj.framework.helper.BeanHelper;
 import simple.xfj.framework.helper.ClassHelper;
 import simple.xfj.framework.helper.IocHelper;
@@ -15,6 +16,7 @@ public class HelperInitiler {
         Class[] clazzs = new Class[]{
                 ClassHelper.class,
                 BeanHelper.class,
+                AopHelper.class,// AopHelper要在beanHelper之后，IocHelper之前初始化
                 IocHelper.class,
                 Controller.class
         };

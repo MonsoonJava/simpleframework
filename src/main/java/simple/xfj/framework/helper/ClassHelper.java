@@ -10,6 +10,7 @@ import simple.xfj.framework.annotation.Controller;
 import simple.xfj.framework.annotation.Service;
 import simple.xfj.framework.util.ClassUtil;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,5 +76,37 @@ public class ClassHelper {
         beanSet.addAll(getControllerSet());
         return beanSet;
     }
+
+
+    /**
+     * 获得某个父类下的所有子类
+     * @param clazz
+     * @return
+     */
+    public static Set<Class<?>> getClassSetBySuper(Class<?> clazz){
+        Set<Class<?>> classSet = new HashSet<Class<?>>();
+        for(Class cls : CLAZZ_SET){
+            if(clazz.isAssignableFrom(cls) && !cls.equals(clazz)){
+                classSet.add(cls);
+            }
+        }
+        return classSet;
+    }
+
+    /**
+     * 获取被某个注解注释的类
+     * @param annoationClass
+     * @return
+     */
+    public static Set<Class<?>> getClassSetByAnnoation(Class<? extends Annotation> annoationClass){
+        Set<Class<?>> classSet = new HashSet<Class<?>>();
+        for(Class cls : CLAZZ_SET){
+            if(cls.isAnnotationPresent(annoationClass)){
+                classSet.add(cls);
+            }
+        }
+        return  classSet;
+    }
+
 
 }
