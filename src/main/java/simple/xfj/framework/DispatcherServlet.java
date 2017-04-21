@@ -104,10 +104,12 @@ public class DispatcherServlet extends HttpServlet{
                     pon.sendRedirect(req.getContextPath() + path);
                 }else{
                     Map<String, Object> model = view.getModel();
-                    for(Map.Entry<String,Object> ele : model.entrySet()){
-                        req.setAttribute(ele.getKey(),ele.getValue());
+                    if(model != null && model.size()>0){
+                        for(Map.Entry<String,Object> ele : model.entrySet()){
+                            req.setAttribute(ele.getKey(),ele.getValue());
+                        }
                     }
-                    req.getRequestDispatcher(ConfigHelper.getAPPJspPath()).forward(req,pon);
+                    req.getRequestDispatcher(ConfigHelper.getAPPJspPath() + path).forward(req,pon);
                 }
             }
         }else if(res instanceof Data){

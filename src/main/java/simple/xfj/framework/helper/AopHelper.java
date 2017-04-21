@@ -1,6 +1,8 @@
 package simple.xfj.framework.helper;
 
 import simple.xfj.framework.annotation.Aspect;
+import simple.xfj.framework.annotation.Execution;
+import simple.xfj.framework.bean.RegexSet;
 import simple.xfj.framework.proxy.AspectProxy;
 import simple.xfj.framework.proxy.Proxy;
 import simple.xfj.framework.proxy.ProxyManager;
@@ -33,7 +35,7 @@ public class AopHelper {
      * @param aspect
      * @return
      */
-    private static Set<Class<?>> getTargetClassSet(Aspect aspect){
+    private static RegexSet getTargetClassSet(Aspect aspect){
         Set<Class<?>> targetClass = new HashSet<Class<?>>();
         if(aspect != null){
             Class<? extends Annotation> annotation = aspect.value();
@@ -42,21 +44,43 @@ public class AopHelper {
                 targetClass.addAll(classSetByAnnoation);
             }
         }
-        return  targetClass;
+        if(targetClass != null && targetClass.size() > 0){
+            return  new RegexSet(null,targetClass);
+        }
+        return  null;
+    }
+
+
+    private static RegexSet getTargetClassSetByRegex(Execution execution){
+        if(null != execution){
+            String regex = execution.value();
+            if(regex != null && regex.length() > 0){
+                Set<Class<?>> classSet = ClassHelper.getClassSetByMatchMethodName(regex);
+                if(classSet != null && classSet.size()>0){
+                    return new RegexSet(regex,classSet);
+                }
+            }
+        }
+        return null;
     }
 
     /**
      * 获取所有的切面类aspest与目标类的映射关系
      */
 
-    private static Map<Class<? extends Proxy>, Set<Class<?>>> getAspect2Target(){
-        Map<Class<? extends Proxy>, Set<Class<?>>> proxyMap = new HashMap<Class<? extends Proxy>, Set<Class<?>>>();
+    private static Map<Class<? extends Proxy>, RegexSet> getAspect2Target(){
+        Map<Class<? extends Proxy>, RegexSet> proxyMap = new HashMap<Class<? extends Proxy>, RegexSet>();
         Set<Class<?>> aspectClassSet = ClassHelper.getClassSetBySuper(AspectProxy.class);
         for(Class clazz : aspectClassSet){
             if(clazz.isAnnotationPresent(Aspect.class)){
                 Aspect aspect = (Aspect)clazz.getAnnotation(Aspect.class);
-                Set<Class<?>> classSet = getTargetClassSet(aspect);
-                proxyMap.put(clazz,classSet);
+                RegexSet regexAllSet = getTargetClassSet(aspect);
+                proxyMap.put(clazz,regexAllSet);
+            }
+            if(clazz.isAnnotationPresent(Execution.class)){
+                Execution execution = (Execution)clazz.getAnnotation(Execution.class);
+                RegexSet regexStringSet = getTargetClassSetByRegex(execution);
+                proxyMap.put(clazz,regexStringSet);  // classSet 与 regexClassSet可能会有重复
             }
         }
         return proxyMap;
@@ -68,12 +92,32 @@ public class AopHelper {
      */
     private static Map<Class<?>,List<Proxy>> getTarget2ProxyList(){
         Map<Class<?>,List<Proxy>> clazz4Proxy = new HashMap<Class<?>, List<Proxy>>();
-        Map<Class<? extends Proxy>, Set<Class<?>>> aspect2Target = getAspect2Target();
-        Set<Map.Entry<Class<? extends Proxy>, Set<Class<?>>>> entries = aspect2Target.entrySet();
-        for(Map.Entry<Class<? extends Proxy>, Set<Class<?>>> entry : entries){
+        Map<Class<? extends Proxy>, RegexSet> aspect2Target = getAspect2Target();
+        Set<Map.Entry<Class<? extends Proxy>, RegexSet>> entries = aspect2Target.entrySet();
+        for(Map.Entry<Class<? extends Proxy>, RegexSet> entry : entries){
             Class<? extends Proxy> proxyClass = entry.getKey();
-            Set<Class<?>> targetSet = entry.getValue();
-            for(Class cls : targetSet){
+            RegexSet targetSet = entry.getValue();
+            if(targetSet != null){
+                String regex = targetSet.getRegex();
+                Set<Class<?>> classes = targetSet.getClassSet();
+                if(classes != null && classes.size() >0){
+                    for(Class cls : classes){
+                        List<Proxy> proxies = clazz4Proxy.get(cls);
+                        if(null == proxies){
+                            proxies = new ArrayList<Proxy>();
+                            Proxy reproxy = ReflectionUtil.newInstance(proxyClass);
+                            reproxy.setRegex(regex);
+                            proxies.add(reproxy);
+                            clazz4Proxy.put(cls,proxies);
+                        }else{
+                            Proxy reproxy = ReflectionUtil.newInstance(proxyClass);
+                            reproxy.setRegex(regex);
+                            proxies.add(reproxy);
+                        }
+                    }
+                }
+            }
+          /*  for(Class cls : targetSet){
                 List<Proxy> proxies = clazz4Proxy.get(cls);
                 if(null == proxies){
                     proxies = new ArrayList<Proxy>();
@@ -82,7 +126,7 @@ public class AopHelper {
                 }else{
                     proxies.add(ReflectionUtil.newInstance(proxyClass));
                 }
-            }
+            }*/
        }
        return clazz4Proxy;
     }

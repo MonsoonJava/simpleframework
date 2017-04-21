@@ -8,4 +8,8 @@ import simple.xfj.framework.annotation.Service;
 @Service
 public class CartService {
 
+    public void xfindUserByName(){
+
+    }
+
 }

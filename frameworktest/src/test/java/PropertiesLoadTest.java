@@ -82,7 +82,15 @@ public class PropertiesLoadTest {
             System.out.println(actionMap.get(re).getControllerClass().getName());
             System.out.println(actionMap.get(re).getActionMethod().getName());
         }
+    }
 
+    @Test
+    public void testRegexMatchClass(){
+        ClassUtil.loadClass(ClassHelper.class.getName(),true);
+        Set<Class<?>> classSet = ClassHelper.getClassSetByMatchMethodName("com.xfj.frameworktest.*find.*");
+        for(Class cls : classSet){
+            System.out.println(cls.getName());
+        }
     }
 
 }

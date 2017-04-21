@@ -7,6 +7,7 @@ import simple.xfj.framework.annotation.Autowired;
 import simple.xfj.framework.annotation.Controller;
 import simple.xfj.framework.bean.Data;
 import simple.xfj.framework.bean.Param;
+import simple.xfj.framework.bean.View;
 import simple.xfj.framework.constant.RequestMethod;
 
 /**
@@ -15,14 +16,26 @@ import simple.xfj.framework.constant.RequestMethod;
 @Controller
 public class CartController {
 
+    private static int i = 0;
+
     @Autowired
     private CartService cartService;
 
     @Action(value = "/helloworld",method = RequestMethod.GET)
-    public Data getRequest(Param param){
+    public View getRequest(Param param){
         Student s = new Student("xfh",24);
         Data data = new Data();
         data.setModel(s);
+        View view = new View("error.jsp",null);
+        return view;
+    }
+
+    @Action(value = "/findname",method = RequestMethod.GET)
+    public Data findName(Param param){
+        Student s = new Student("xfh",25);
+        Data data = new Data();
+        data.setModel(s);
+        System.out.println(i++);
         return data;
     }
 
@@ -33,4 +46,5 @@ public class CartController {
     public void setCartService(CartService cartService) {
         this.cartService = cartService;
     }
+
 }

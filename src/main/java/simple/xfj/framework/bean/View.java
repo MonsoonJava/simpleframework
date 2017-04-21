@@ -19,6 +19,10 @@ public class View {
         this.model = model;
     }
 
+    public View() {
+
+    }
+
     public String getPath() {
         return path;
     }

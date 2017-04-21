@@ -11,8 +11,10 @@ import simple.xfj.framework.annotation.Service;
 import simple.xfj.framework.util.ClassUtil;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * 获取指定包名下的各种注解类的helper类
@@ -106,6 +108,32 @@ public class ClassHelper {
             }
         }
         return  classSet;
+    }
+
+
+    /**
+     * 根据正则选取正则匹配方法名的class类
+     * @param regex
+     * @return
+     */
+    public static Set<Class<?>> getClassSetByMatchMethodName(String regex){
+        Set<Class<?>> classSet = new HashSet<Class<?>>();
+        Pattern pattern = Pattern.compile(regex);
+        for(Class cls : CLAZZ_SET){
+            String clsName = cls.getName();
+            Method[] methods = cls.getDeclaredMethods();
+            if(methods != null && methods.length > 0){
+                for(Method method : methods){
+                    String methodName = clsName + "." + method.getName().toLowerCase();
+                    if(pattern.matcher(methodName).matches()){
+                        classSet.add(cls);
+                        //只要添加一次就可以了
+                        break;
+                    }
+                }
+            }
+        }
+        return classSet;
     }
 
 
